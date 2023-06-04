@@ -1,18 +1,35 @@
-import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
+import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToMany } from "typeorm"
+import {Routine} from './Routine'
 
 @Entity()
 export class User {
+  @PrimaryGeneratedColumn()
+  user_id: number;
 
-    @PrimaryGeneratedColumn()
-    id: number
+  @Column({
+    length: 25,
+    unique: true,
+    nullable: false,
+  })
+  username: string;
 
-    @Column()
-    firstName: string
+  @Column({
+    unique: true,
+    nullable: false,
+  })
+  email: string;
 
-    @Column()
-    lastName: string
+  @Column({
+    nullable: false,
+  })
+  password: string;
 
-    @Column()
-    age: number
+  @CreateDateColumn()
+  created_at: Date;
 
+  @UpdateDateColumn()
+  updated_at: Date;
+
+  @OneToMany(() => Routine, (routine) => routine.user)
+    routines: Routine[]
 }
