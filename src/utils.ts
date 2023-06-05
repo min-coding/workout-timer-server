@@ -5,7 +5,7 @@ function isAuth(req, res: Response, next) {
   if (req.isAuthenticated()) {
     return next();
   }
-  res.status(401).send({ message: `User is unauthorized` });
+  return next()
 }
 
 export { isAuth };

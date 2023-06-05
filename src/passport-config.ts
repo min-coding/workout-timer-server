@@ -33,8 +33,9 @@ function setPassport(passport, getUserByEmail, getUserById) {
 
   passport.deserializeUser(async (id, done) => {
     const user = await getUserById(id);
-    console.log('Deserialized user:', user);
-    return done(null, user);
+    const {user_id,username,email} = user
+    console.log('Deserialized user:', user_id, username, email);
+    return done(null, user_id, username, email);
   });
 }
 
