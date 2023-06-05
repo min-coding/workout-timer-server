@@ -1,0 +1,69 @@
+How passport login workouts
+
+
+1. Passport.js Setup:
+
+- npm i express-flash express-session passport passport-local
+- Install the Passport.js library using npm or yarn: npm install passport or yarn add passport.
+Import the necessary modules and strategies for authentication, such as passport-local for username/password authentication. You can use other strategy for authentication like OAuth, webtoken, etc. 
+
+
+2. Application Setup:
+- Initialize and configure the Express.js application.
+- Configure session management for user sessions, such as using express-session middleware.
+
+app.use(flash())
+app.use(
+  session({
+    secret: 'sessionSecret',
+    resave: false,
+    saveUninitialized: false,
+  })
+); 
+app.use(passport.session()) 
+app.use(passport.initialize())
+
+3. Passport Configuration:
+  We create a function (setPassport) that verify, store and retrieve user to/from session storage. This function contains callback parameters to receive function from index.ts. 
+  
+  We export this function to index.ts (which is connected to database) to call user from the database. When the we get the returned user from the database, we send it back to setPassport in order to perform verification logic and save to session storage.
+
+  3.1 Choose strategy and verify function (with authUser function)
+      passport.use(
+    new LocalStrategy(
+      {
+        usernameField: 'email',
+      },
+      authUser
+    )
+  );
+
+  3.2 serialize (save to session)
+  passport.serializeUser((user, done) => {
+    console.log('Serialized user:', user);
+    return done(null, user.user_id);
+  });
+
+  3.3 deserialize (retrieving the complete user object based on the data stored in the session)
+  passport.deserializeUser(async (id, done) => {
+    const user = await getUserById(id);
+    console.log('Deserialized user:', user);
+    return done(null, user);
+  });
+
+4. Authentication Flow:
+
+Passport.js Flow
+  4.1 When a user attempts to authenticate, the application receives the user's credentials, typically through a login form.
+
+  4.2 The application initiates the authentication process, typically through a route or a controller.
+  4.3 Passport middleware is used to authenticate the user: 4.4 Passport middleware intercepts the authentication request, determines the appropriate strategy based on the request, and invokes the verification function.
+
+  4.5 The verification function validates the user's credentials against the stored data, such as a username/password combination in the database.
+
+  4.6 If the credentials are valid, the verification function invokes the done callback with the user object.
+
+  4.7 Passport middleware handles the authentication result and establishes a user session by serializing the user object and storing it in the session.
+
+  4.8 If the credentials are invalid, the verification function invokes the done callback with an error or false to indicate authentication failure.
+
