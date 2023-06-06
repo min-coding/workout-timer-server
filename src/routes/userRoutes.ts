@@ -7,6 +7,32 @@ import * as express from 'express'
 const userRouter = express.Router()
 const userRepo = AppDataSource.getRepository(User)
 
+<<<<<<< Updated upstream
+=======
+interface UserSession extends Request {
+  user: User
+  flash: Function
+}
+
+userRouter.post(
+  '/signin',
+  passport.authenticate('local', {
+    successRedirect: '/api/users',
+    failureRedirect: '/api/users',
+    failureFlash: true,
+  })
+);
+
+userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
+  try {
+    res.send(`Congrats ${req.user.username} logins successful`);
+  } catch (error) {
+    res.send(req.flash().error)
+  }
+});
+
+
+>>>>>>> Stashed changes
 userRouter.post('/signup', (async (req: Request, res: Response) => {
   try {
     const { username, password, email } = req.body;
