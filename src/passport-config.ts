@@ -27,15 +27,23 @@ function setPassport(passport, getUserByEmail, getUserById) {
   );
   //get user id and save to session
   passport.serializeUser((user, done) => {
+<<<<<<< HEAD
     console.log('Serialized user:', user);
+=======
+>>>>>>> 839ab5c (routine routes)
     return done(null, user.user_id);
   });
 
   passport.deserializeUser(async (id, done) => {
     const user = await getUserById(id);
     const {user_id,username,email} = user
+<<<<<<< HEAD
     console.log('Deserialized user:', user_id, username, email);
     return done(null, user_id, username, email);
+=======
+    console.log('Deserialized user:', user);
+    return done(null, user);
+>>>>>>> 839ab5c (routine routes)
   });
 }
 

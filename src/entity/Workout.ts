@@ -31,7 +31,7 @@ export class Workout {
   updated_at: Date;
 
   /**Relationship */
-  @ManyToOne(() => Routine, (routine) => routine.workouts, { nullable: false })
+  @ManyToOne(() => Routine, (routine) => routine.workouts,{onDelete:'CASCADE',nullable:false})
   @JoinColumn({name:"routine_id"})
   routine: Routine;
 }

@@ -67,3 +67,25 @@ Passport.js Flow
 
   4.8 If the credentials are invalid, the verification function invokes the done callback with an error or false to indicate authentication failure.
 
+<<<<<<< HEAD
+=======
+
+Methods
+Individual Repo
+const repo = AppDataSource.getRepository(repo);
+
+get
+const user = await userRepository.findOneBy({
+    id: 1,
+})
+
+add
+const savedEntity = await repo.save(entity);
+
+remove
+const removeEntity = await repo(User).delete(user_id)
+
+edit
+const updateEntity = await repo(User).merge(user, req.body)
+
+>>>>>>> 839ab5c (routine routes)

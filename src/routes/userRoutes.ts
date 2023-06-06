@@ -9,9 +9,17 @@ import { isAuth } from "../utils";
 const userRouter = express.Router()
 const userRepo = AppDataSource.getRepository(User)
 
+<<<<<<< HEAD
 interface UserSession extends Request {
   user: User
   flash:Function
+=======
+<<<<<<< Updated upstream
+=======
+interface UserSession extends Request {
+  user: User
+  flash: Function
+>>>>>>> 839ab5c (routine routes)
 }
 
 userRouter.post(
@@ -32,6 +40,10 @@ userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
 });
 
 
+<<<<<<< HEAD
+=======
+>>>>>>> Stashed changes
+>>>>>>> 839ab5c (routine routes)
 userRouter.post('/signup', (async (req: Request, res: Response) => {
   try {
     const { username, password, email } = req.body;
