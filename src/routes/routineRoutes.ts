@@ -4,10 +4,12 @@ import * as express from 'express';
 import { isAuth } from '../utils';
 import { AppDataSource } from '../data-source';
 import { Routine } from '../entity/Routine';
+import { Workout } from '../entity/Workout';
 
 const routineRouter = express.Router();
 const routineRepository = AppDataSource.getRepository(Routine);
 const userRepository = AppDataSource.getRepository(User);
+const workoutRepository = AppDataSource.getRepository(Workout)
 
 interface UserSession extends Request {
   user: User;
@@ -58,21 +60,6 @@ routineRouter.delete('/:routineId', async function (req: UserSession, res: Respo
   }
 }); 
 
-//get all routines from that user (routine lists)
-routineRouter.get('/',async function (req:UserSession,res:Response) {
-  try {
-     const routineLists = await routineRepository
-       .createQueryBuilder('routine')
-       .select(['routine.routine_name', 'routine.routine_id'])
-       .where('routine.user_id = :userId', { userId: req.user.user_id })
-       .getMany();
-
-     return res.send(routineLists);
-  } catch (error) {
-    res.send('you have no toutine')
-    console.log('you have no routine!')
-  }
-})
 
 //update routine name only
 routineRouter.put('/:routineId',async function(req:UserSession,res:Response) {
@@ -94,4 +81,34 @@ routineRouter.put('/:routineId',async function(req:UserSession,res:Response) {
   }
 })
 
+//get all routines from that user (routine lists)
+routineRouter.get('/',async function (req:UserSession,res:Response) {
+  try {
+     const routineLists = await routineRepository
+       .createQueryBuilder('routine')
+       .select(['routine.routine_name', 'routine.routine_id'])
+       .where('routine.user_id = :userId', { userId: req.user.user_id })
+       .getMany();
+
+     return res.send(routineLists);
+  } catch (error) {
+    res.send('you have no toutine')
+    console.log('you have no routine!')
+  }
+})
+
+//get workout list in specific routine
+routineRouter.get(
+  '/:routineId',
+  async function (req: UserSession, res: Response) {
+    try {
+      //get the routine id from param, get lists of workouts
+      const workoutList = await workoutRepository.createQueryBuilder('workout').select(['workout.workout_name', 'workout.workout_id']).where('workout.routine_id = :routineId', { routineId: req.params.routineId }).getMany()
+      
+      return res.send(workoutList)
+    } catch (error) {
+      return res.send('can get that list bro');
+    }
+  }
+);
 export default routineRouter;

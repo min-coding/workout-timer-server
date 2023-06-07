@@ -47,12 +47,11 @@ workoutRouter.post(
 //delete workout
 workoutRouter.delete('/:workoutId', async function (req: UserSession, res: Response){
   try {
-
+    
   } catch (error) {
     
   }
 })
-//get workout list
 
 //get individual workout ?
 
