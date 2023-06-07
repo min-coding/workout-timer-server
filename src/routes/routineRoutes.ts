@@ -1,19 +1,14 @@
 import { User } from '../entity/User';
 import { Request, Response } from 'express';
 import * as express from 'express';
-<<<<<<< Updated upstream
-=======
 import { isAuth } from '../utils';
 import { AppDataSource } from '../data-source';
 import { Routine } from '../entity/Routine';
->>>>>>> Stashed changes
 
 const routineRouter = express.Router();
 const routineRepository = AppDataSource.getRepository(Routine);
 const userRepository = AppDataSource.getRepository(User);
 
-<<<<<<< Updated upstream
-=======
 interface UserSession extends Request {
   user: User;
   flash: Function
@@ -99,5 +94,4 @@ routineRouter.put('/:routineId',async function(req:UserSession,res:Response) {
   }
 })
 
->>>>>>> Stashed changes
 export default routineRouter;

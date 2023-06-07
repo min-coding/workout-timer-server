@@ -1,7 +1,5 @@
 import { AppDataSource } from "./data-source"
 import { Request, Response } from 'express';
-<<<<<<< Updated upstream
-=======
 
 //Authen
 import * as passport from 'passport'
@@ -11,7 +9,6 @@ import setPassport from "./passport-config";
 import { isAuth } from "./utils";
 
 // Routes
->>>>>>> Stashed changes
 import userRouter from './routes/userRoutes';
 import routineRouter from "./routes/routineRoutes";
 import workoutRouter from "./routes/workoutRoutes";
@@ -19,6 +16,7 @@ import workoutRouter from "./routes/workoutRoutes";
 import * as express from 'express';
 import * as cors from 'cors';
 import authRouter from "./routes/authRoutes";
+import { User } from "./entity/User";
 
 
 AppDataSource.initialize().then(async () => {
@@ -27,8 +25,6 @@ AppDataSource.initialize().then(async () => {
 
 // create and setup express app
 const app = express()
-<<<<<<< Updated upstream
-=======
 const port = 8080;
 const userRepository = AppDataSource.getRepository(User);
 
@@ -53,7 +49,6 @@ app.use(
 app.use(passport.session()) 
 app.use(passport.initialize())
 
->>>>>>> Stashed changes
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
@@ -63,7 +58,6 @@ app.use('/api/users', userRouter)
 app.use('/api/routines',isAuth, routineRouter);
 app.use('/api/workouts',isAuth, workoutRouter);
 
-const port = 8080;
 app.listen(port, () => {
   console.log(`serve at http://localhost:${port}`);
 });

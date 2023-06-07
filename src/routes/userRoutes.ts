@@ -3,12 +3,12 @@ import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
 import * as bcrypt from 'bcryptjs'
 import * as express from 'express'
+import { isAuth } from "../utils";
+import * as passport from 'passport';
 
 const userRouter = express.Router()
 const userRepo = AppDataSource.getRepository(User)
 
-<<<<<<< Updated upstream
-=======
 interface UserSession extends Request {
   user: User
   flash: Function
@@ -32,7 +32,6 @@ userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
 });
 
 
->>>>>>> Stashed changes
 userRouter.post('/signup', (async (req: Request, res: Response) => {
   try {
     const { username, password, email } = req.body;
