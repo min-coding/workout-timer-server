@@ -9,9 +9,9 @@ import * as passport from 'passport'
 import * as flash from 'express-flash';
 import * as session from 'express-session';
 import setPassport from "./passport-config";
+import { isAuth } from "./utils";
 
 // Routes
-import { isAuth } from "./utils";
 import userRouter from './routes/userRoutes';
 import routineRouter from "./routes/routineRoutes";
 import workoutRouter from "./routes/workoutRoutes";
@@ -22,7 +22,6 @@ AppDataSource.initialize().then(async () => {
 
 // create and setup express app
 const app = express()
-
 const port = 8080;
 const userRepository = AppDataSource.getRepository(User);
 
