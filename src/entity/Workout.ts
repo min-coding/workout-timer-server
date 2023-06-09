@@ -6,12 +6,8 @@ import {
   UpdateDateColumn,
   ManyToOne,
   JoinColumn,
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
 } from 'typeorm';
 import { Routine } from './Routine';
-import { AppDataSource } from '../data-source';
 
 @Entity()
 export class Workout {
@@ -37,8 +33,7 @@ export class Workout {
   /**Relationship */
   @ManyToOne(() => Routine, (routine) => routine.workouts, {
     onDelete: 'CASCADE',
-    nullable: false,
-    eager: true,
+    nullable: false
   })
   @JoinColumn({ name: 'routine_id' })
   routine: Routine;

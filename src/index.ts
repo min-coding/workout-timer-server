@@ -1,20 +1,20 @@
 import { AppDataSource } from "./data-source"
-import * as express from 'express';
-import * as cors from 'cors';
-import { User } from "./entity/User";
-import { Request, Response } from 'express';
+import * as express from 'express'
+import * as cors from 'cors'
+import { User } from "./entity/User"
+import { Request, Response } from 'express'
 
 //Authen
 import * as passport from 'passport'
-import * as flash from 'express-flash';
-import * as session from 'express-session';
-import setPassport from "./passport-config";
-import { isAuth } from "./utils";
+import * as flash from 'express-flash'
+import * as session from 'express-session'
+import setPassport from "./passport-config"
+import { isAuth } from "./utils"
 
 // Routes
-import userRouter from './routes/userRoutes';
-import routineRouter from "./routes/routineRoutes";
-import workoutRouter from "./routes/workoutRoutes";
+import userRouter from './routes/userRoutes'
+import routineRouter from "./routes/routineRoutes"
+import workoutRouter from "./routes/workoutRoutes"
 
 AppDataSource.initialize().then(async () => {
     console.log('initialized database!')
@@ -22,18 +22,18 @@ AppDataSource.initialize().then(async () => {
 
 // create and setup express app
 const app = express()
-const port = 8080;
-const userRepository = AppDataSource.getRepository(User);
+const port = 8080
+const userRepository = AppDataSource.getRepository(User)
 
 //authen 
 setPassport(passport, async function(email){
   //return user with that email
   const user = await userRepository.findOneBy({email:email})
-  return user;
+  return user
 },async function(id){
-  const user = await userRepository.findOneBy({user_id:id});
-  return user;
-});
+  const user = await userRepository.findOneBy({user_id:id})
+  return user
+})
 app.use(flash())
 app.use(
   session({
@@ -41,19 +41,19 @@ app.use(
     resave: true,
     saveUninitialized: false,
   })
-); 
+) 
 
 app.use(passport.session()) 
 app.use(passport.initialize())
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true }))
 app.use(cors())
 
 app.use('/api/users', userRouter)
-app.use('/api/routines',isAuth, routineRouter);
-app.use('/api/workouts',isAuth, workoutRouter);
+app.use('/api/routines',isAuth, routineRouter)
+app.use('/api/workouts',isAuth, workoutRouter)
 
 app.listen(port, () => {
-  console.log(`serve at http://localhost:${port}`);
-});
+  console.log(`serve at http://localhost:${port}`)
+})

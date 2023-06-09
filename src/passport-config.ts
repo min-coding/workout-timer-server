@@ -1,19 +1,19 @@
-import { Strategy as LocalStrategy } from 'passport-local';
-import * as bcrypt from 'bcryptjs';
+import { Strategy as LocalStrategy } from 'passport-local'
+import * as bcrypt from 'bcryptjs'
 
 function setPassport(passport, getUserByEmail, getUserById) {
   async function authUser(email, password, done) {
-    const user = await getUserByEmail(email);
-    if (user == null) return done(null, false, { message: 'Invalid email' });
+    const user = await getUserByEmail(email)
+    if (user == null) return done(null, false, { message: 'Invalid email' })
     try {
       //compare password from user VS database
       if (await bcrypt.compare(password, user.password)) {
-        return done(null, user);
+        return done(null, user)
       } else {
-        return done(null, false, { message: 'Incorrect Password' });
+        return done(null, false, { message: 'Incorrect Password' })
       }
     } catch (error) {
-      return done(error);
+      return done(error)
     }
   }
 
@@ -24,17 +24,18 @@ function setPassport(passport, getUserByEmail, getUserById) {
       },
       authUser
     )
-  );
+  )
   //get user id and save to session
   passport.serializeUser((user, done) => {
-    return done(null, user.user_id);
-  });
+    return done(null, user.user_id)
+  })
 
+  //call user by user id that is saved in session
   passport.deserializeUser(async (id, done) => {
     const user = await getUserById(id)
-    console.log('Deserialized user:', user);
-    return done(null, user);
-  });
+    console.log('Deserialized user:', user)
+    return done(null, user)
+  })
 }
 
-export default setPassport;
+export default setPassport
