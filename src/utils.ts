@@ -2,6 +2,7 @@
 import { Request, Response } from 'express';
 
 function isAuth(req, res: Response, next) {
+  console.log(req.session)
   if (req.isAuthenticated()) {
     return next();
   }

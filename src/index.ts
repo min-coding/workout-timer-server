@@ -1,8 +1,11 @@
 import { AppDataSource } from "./data-source"
-import * as express from 'express';
-import * as cors from 'cors';
-import { User } from "./entity/User";
-import { Request, Response } from 'express';
+import * as express from 'express'
+import * as https from 'https'
+import * as path from 'path'
+import * as fs from 'fs'
+import * as cors from 'cors'
+import { User } from "./entity/User"
+import { Request, Response } from 'express'
 
 //Authen
 import * as passport from 'passport'
@@ -22,8 +25,14 @@ AppDataSource.initialize().then(async () => {
 
 // create and setup express app
 const app = express()
-const port = 8080;
-const userRepository = AppDataSource.getRepository(User);
+app.use(
+  cors({
+    origin: 'http://127.0.0.1:5173',
+    credentials: true,
+    // exposedHeaders: ['set-cookie'],
+  })
+);
+const userRepository = AppDataSource.getRepository(User)
 
 //authen 
 setPassport(passport, async function(email){
@@ -38,22 +47,31 @@ app.use(flash())
 app.use(
   session({
     secret: 'sessionSecret',
-    resave: true,
+    resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: true,
+      sameSite: 'none',
+    },
   })
 ); 
 
-app.use(passport.session()) 
 app.use(passport.initialize())
+app.use(passport.session()) 
 
 app.use(express.json())
-app.use(express.urlencoded({ extended: true }));
-app.use(cors())
+app.use(express.urlencoded({ extended: true }))
 
 app.use('/api/users', userRouter)
 app.use('/api/routines',isAuth, routineRouter);
 app.use('/api/workouts',isAuth, workoutRouter);
 
-app.listen(port, () => {
-  console.log(`serve at http://localhost:${port}`);
-});
+const sslServer = https.createServer(
+  {
+    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+  },
+  app
+);
+
+sslServer.listen(8080,()=>console.log('secure server on port 8080'))

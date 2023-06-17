@@ -18,14 +18,15 @@ userRouter.post(
   '/signin',
   passport.authenticate('local', {
     successRedirect: '/api/users',
-    failureRedirect: '/api/users',
+    // failureRedirect: '/api/users',
     failureFlash: true,
   })
 );
 
-userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
+userRouter.get('/', (req: UserSession, res: Response) => {
+  const { username, user_id,email } = req.user; 
   try {
-    res.send(`Congrats ${req.user.username} logins successful`);
+    res.send({username,user_id,email});
   } catch (error) {
     res.send(req.flash().error)
   }

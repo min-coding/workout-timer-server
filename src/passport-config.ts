@@ -20,15 +20,16 @@ function setPassport(passport, getUserByEmail, getUserById) {
   passport.use(
     new LocalStrategy(
       {
-        usernameField: 'email',
+        usernameField: 'email', 
       },
       authUser
     )
   );
   //get user id and save to session
   passport.serializeUser((user, done) => {
-    return done(null, user.user_id);
-  });
+    console.log(`serial ${user.email} ${user.password} ${user.user_id}`);
+    return done(null, user.user_id)
+  })
 
   passport.deserializeUser(async (id, done) => {
     const user = await getUserById(id)
