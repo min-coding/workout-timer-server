@@ -30,6 +30,6 @@ export class User {
   @UpdateDateColumn()
   updated_at: Date;
 
-  @OneToMany(() => Routine, (routine) => routine.user)
-    routines: Routine[]
+  @OneToMany(() => Routine, (routine) => routine.user, { onUpdate: 'CASCADE' })
+  routines: Routine[];
 }
