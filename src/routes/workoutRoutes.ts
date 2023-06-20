@@ -29,8 +29,9 @@ workoutRouter.post(
       workout.duration = req.body.duration;
       workout.routine = routine;
       const savedWorkout = await workoutRepository.save(workout);
+      console.log(savedWorkout);
 
-      //update total time 
+      //update total time
       routine.total_time += workout.duration;
 
       await routineRepository.save(routine);
@@ -41,45 +42,57 @@ workoutRouter.post(
       return res.send('cant create a workout');
     }
   }
-)
+);
 //update workout time or name either
-workoutRouter.put('/:workoutId',async function (req:UserSession,res:Response) {
-  try {
-    const workout = await workoutRepository.findOneBy({ workout_id: Number(req.params.workoutId) })
+workoutRouter.put(
+  '/:workoutId',
+  async function (req: UserSession, res: Response) {
+    try {
+      const workout = await workoutRepository.findOneBy({
+        workout_id: Number(req.params.workoutId),
+      })
 
-    const routine = workout.routine
+      const { workout_name, duration } = req.body;
 
-    const {workout_name,duration} = req.body
+      //update name
+      if (workout_name) workout.workout_name = workout_name;
+      //update duration (workout) and total_time (routine)
+      if (duration) {
+        //find the diff
+        const diff = Math.abs(duration - workout.duration);
 
-    if (workout_name) workout.workout_name = workout_name
-    if (duration) {
-      //find the diff 
-      
-      const diff = Math.abs(duration - workout.duration)
-      //if it's more than previous, add the diff
-      if(duration > workout.duration) routine.total_time += diff
-      else if(duration < workout.duration) routine.total_time -= diff
-      
-      workout.duration = duration
-      await routineRepository.save(routine)
+        //get routine to update total_time in that routine
+        const routine = workout.routine;
+
+        //if it's more than previous, add the diff
+        if (duration > workout.duration) routine.total_time += diff;
+        else if (duration < workout.duration) routine.total_time -= diff;
+
+        workout.duration = duration;
+        await routineRepository.save(routine);
+      }
+      await workoutRepository.save(workout);
+      return res.send(workout);
+    } catch (error) {
+      return res.send('cant updateeeee???? huhhh');
     }
-    await workoutRepository.save(workout)
-    return res.send(workout)
-    
-  } catch (error) {
-    return res.send('cant updateeeee???? huhhh')
   }
-})
+);
 
 //delete workout
-workoutRouter.delete('/:workoutId', async function (req: UserSession, res: Response){
-  try {
-    const deleteWorkout = await workoutRepository.delete(req.params.workoutId)
-    return res.send({message:'your workout is deleted!'})
-  } catch (error) {
-    return res.send({message:'cant delete this bro'})
+workoutRouter.delete(
+  '/:workoutId',
+  async function (req: UserSession, res: Response) {
+    try {
+      const deleteWorkout = await workoutRepository.delete(
+        req.params.workoutId
+      );
+      return res.send({ message: 'your workout is deleted!' });
+    } catch (error) {
+      return res.send({ message: 'cant delete this bro' });
+    }
   }
-})
+);
 
 //get individual workout ?
 

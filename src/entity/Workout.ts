@@ -33,7 +33,8 @@ export class Workout {
   /**Relationship */
   @ManyToOne(() => Routine, (routine) => routine.workouts, {
     onDelete: 'CASCADE',
-    nullable: false
+    nullable: false,
+    eager:true
   })
   @JoinColumn({ name: 'routine_id' })
   routine: Routine;
