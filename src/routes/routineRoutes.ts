@@ -140,10 +140,10 @@ routineRouter.get('/', async function (req: UserSession, res: Response) {
     const routineLists = await routineRepository
       .createQueryBuilder('routine')
       .leftJoinAndSelect('routine.workouts', 'workout')
-      .select(['routine.routine_name', 'routine.routine_id', 'workout'])
+      .select(['routine.routine_name', 'routine.routine_id','routine.total_time','workout'])
       .where('routine.user_id = :userId', { userId: req.user.user_id })
-      .getMany();
-
+      .getMany()
+    console.log(`called routine list !!! ${routineLists}`)
     return res.send(routineLists);
   } catch (error) {
     res.send('You have no routines');
