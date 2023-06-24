@@ -8,6 +8,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Routine } from './Routine';
+import { AppDataSource } from '../data-source';
 
 @Entity()
 export class Workout {
@@ -20,7 +21,8 @@ export class Workout {
   workout_name: string;
 
   @Column({
-    nullable: false,default:0
+    nullable: false,
+    default: 0,
   })
   duration: number;
 
@@ -33,8 +35,9 @@ export class Workout {
   /**Relationship */
   @ManyToOne(() => Routine, (routine) => routine.workouts, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     nullable: false,
-    eager:true
+    eager: true,
   })
   @JoinColumn({ name: 'routine_id' })
   routine: Routine;

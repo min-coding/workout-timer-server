@@ -54,10 +54,10 @@ app.use(
     secret: 'sessionSecret',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      secure: true,
-      sameSite: 'none',
-    },
+    // cookie: {
+    //   secure: true,
+    //   sameSite: 'none',
+    // },
   })
 );
 
@@ -71,15 +71,15 @@ app.use('/api/users', userRouter);
 app.use('/api/routines', isAuth, routineRouter);
 app.use('/api/workouts', isAuth, workoutRouter);
 
-const sslServer = https.createServer(
-  {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
-  },
-  app
-);
+// const sslServer = https.createServer(
+//   {
+//     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+//     cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+//   },
+//   app
+// );
 
-sslServer.listen(8080, () =>
-  console.log('secure server on port https://localhost:8080/')
-);
-// app.listen(8080,()=>console.log(`running on http://localhost:8080`))
+// sslServer.listen(8080, () =>
+//   console.log('secure server on port https://localhost:8080/')
+// );
+app.listen(8080,()=>console.log(`running on http://localhost:8080`))

@@ -2,14 +2,9 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
   ManyToOne,
   OneToMany,
-  AfterLoad,
   JoinColumn,
-  AfterInsert,
-  AfterRemove,
-  AfterUpdate,
 } from 'typeorm';
 import { User } from './User';
 import { Workout } from './Workout';
@@ -32,6 +27,7 @@ export class Routine {
   //many routines --> one user
   @ManyToOne(() => User, (user) => user.routines, {
     onDelete: 'CASCADE',
+    onUpdate: 'CASCADE',
     nullable: false,
     eager: true,
   })
@@ -42,7 +38,7 @@ export class Routine {
 
   //one routine --> many workouts
   @OneToMany(() => Workout, (workout) => workout.routine, {
-    onUpdate: 'CASCADE',
+    cascade: ['insert', 'update', 'remove'],
   })
   workouts: Workout[];
 }

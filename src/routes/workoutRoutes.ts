@@ -14,86 +14,112 @@ interface UserSession extends Request {
   flash: Function;
 }
 
-//create workout
+async function updateRoutineTotalTime(routine) {
+  const routineRepository = AppDataSource.getRepository(Routine);
+
+  //call routine and join it with workout to retrieve the workouts then sum them into totalDuration
+  const totalDuration = await routineRepository
+    .createQueryBuilder('routine')
+    .leftJoin('routine.workouts', 'workout')
+    .select('SUM(workout.duration)', 'totalDuration')
+    .where('routine.routine_id = :routineId', {
+      routineId: routine.routine_id,
+    })
+    .getRawOne();
+
+  if (routine) {
+    //if totalDuration is undefined, which is probably no workout inside a routine? return 0
+    routine.total_time = totalDuration?.totalDuration || 0;
+    console.log(`New routine total_time : ${routine.total_time}`);
+    await routineRepository.save(routine);
+  }
+}
+
+// API route for creating a new workout
 workoutRouter.post(
   '/:routineId',
   async function (req: UserSession, res: Response) {
     try {
-      //get routine id to assign newly created workout to
+      // Get the routine ID from the request params
+      const routineId = Number(req.params.routineId);
+
+      // Find the routine using the routine ID
       const routine = await routineRepository.findOneBy({
-        routine_id: Number(req.params.routineId),
+        routine_id: routineId,
       });
 
+      // Create a new instance of Workout
       const workout = new Workout();
       workout.workout_name = req.body.workout_name;
       workout.duration = req.body.duration;
       workout.routine = routine;
+
+      // Save the workout to the database
       const savedWorkout = await workoutRepository.save(workout);
-      console.log(savedWorkout);
 
-      //update total time
-      routine.total_time += workout.duration;
+      // Update the routine's total_time
+      await updateRoutineTotalTime(routine);
 
-      await routineRepository.save(routine);
-      //update total time from duration added
-
-      return res.send(savedWorkout);
+      // Send the saved workout as the response
+      res.send(savedWorkout);
     } catch (error) {
-      return res.send('cant create a workout');
+      // Handle any errors
+      console.log(error);
     }
   }
 );
-//update workout time or name either
+
+// API route for updating a workout
 workoutRouter.put(
   '/:workoutId',
   async function (req: UserSession, res: Response) {
     try {
       const workout = await workoutRepository.findOneBy({
         workout_id: Number(req.params.workoutId),
-      })
+      });
+      const routine = workout.routine;
 
       const { workout_name, duration } = req.body;
 
-      //update name
+      // Update workout properties
       if (workout_name) workout.workout_name = workout_name;
-      //update duration (workout) and total_time (routine)
-      if (duration) {
-        //find the diff
-        const diff = Math.abs(duration - workout.duration);
+      if (duration) workout.duration = duration;
 
-        //get routine to update total_time in that routine
-        const routine = workout.routine;
+      // Save the updated workout to the database
+      const updatedWorkout = await workoutRepository.save(workout);
 
-        //if it's more than previous, add the diff
-        if (duration > workout.duration) routine.total_time += diff;
-        else if (duration < workout.duration) routine.total_time -= diff;
+      // Update the routine's total_time
+      await updateRoutineTotalTime(routine);
 
-        workout.duration = duration;
-        await routineRepository.save(routine);
-      }
-      await workoutRepository.save(workout);
-      return res.send(workout);
+      return res.send(updatedWorkout);
     } catch (error) {
-      return res.send('cant updateeeee???? huhhh');
+      console.log(error);
+      return res.send('Unable to update the workout');
     }
   }
 );
 
-//delete workout
+// API route for deleting a workout
 workoutRouter.delete(
   '/:workoutId',
   async function (req: UserSession, res: Response) {
     try {
-      const deleteWorkout = await workoutRepository.delete(
-        req.params.workoutId
-      );
-      return res.send({ message: 'your workout is deleted!' });
+      const workout = await workoutRepository.findOneBy({
+        workout_id: Number(req.params.workoutId),
+      });
+      const routine = workout.routine;
+
+      // Delete the workout from the database
+      await workoutRepository.delete(req.params.workoutId);
+
+      // Update the routine's total_time
+      await updateRoutineTotalTime(routine);
+
+      return res.send({ message: 'Workout deleted successfully' });
     } catch (error) {
-      return res.send({ message: 'cant delete this bro' });
+      return res.send({ message: 'Unable to delete the workout' });
     }
   }
 );
-
-//get individual workout ?
 
 export default workoutRouter;
