@@ -28,7 +28,6 @@ routineRouter.post('/', async function (req: UserSession, res: Response) {
 
     const { routine_name, total_time, routine_id } =
       await routineRepository.save(routine);
-    // console.log(savedRoutine)
     return res.send({ routine_name, total_time, routine_id });
   } catch (error) {
     return res.send('cannot create new routine');
@@ -49,14 +48,11 @@ routineRouter.delete(
         const removedRoutine = await routineRepository.delete(
           req.params.routineId
         );
-        console.log(removedRoutine);
-
-        return res.send(removedRoutine);
+        return res.status(200).send(removedRoutine);
       } else {
         return res.send('You are unauthorized to delete this routine');
       }
     } catch (error) {
-      console.log(error);
       return res.send('cannot delete routine');
     }
   }
@@ -125,9 +121,9 @@ routineRouter.get(
         })
         .getMany();
 
-      return res.send(workoutList);
+      return res.status(200).send(workoutList);
     } catch (error) {
-      return res.send('can get that list bro');
+      return res.status(500).send('Internal server error');
     }
   }
 );
@@ -138,14 +134,17 @@ routineRouter.get('/', async function (req: UserSession, res: Response) {
     const routineLists = await routineRepository
       .createQueryBuilder('routine')
       .leftJoinAndSelect('routine.workouts', 'workout')
-      .select(['routine.routine_name', 'routine.routine_id','routine.total_time','workout'])
+      .select([
+        'routine.routine_name',
+        'routine.routine_id',
+        'routine.total_time',
+        'workout',
+      ])
       .where('routine.user_id = :userId', { userId: req.user.user_id })
-      .getMany()
-    console.log(`called routine list !!! ${routineLists}`)
-    return res.send(routineLists);
+      .getMany();
+    return res.status(200).send(routineLists);
   } catch (error) {
-    res.send('You have no routines');
-    console.log('You have no routines!');
+    res.status(404).send('You have no routines');
   }
 });
 

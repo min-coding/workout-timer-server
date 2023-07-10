@@ -29,7 +29,6 @@ async function updateRoutineTotalTime(routine) {
   if (routine) {
     //if totalDuration is undefined, which is probably no workout inside a routine? return 0
     routine.total_time = totalDuration?.totalDuration || 0;
-    console.log(`New routine total_time : ${routine.total_time}`);
     await routineRepository.save(routine);
   }
 }
@@ -92,8 +91,7 @@ workoutRouter.put(
 
       return res.send(updatedWorkout);
     } catch (error) {
-      console.log(error);
-      return res.send('Unable to update the workout');
+      return res.status(500).send('Internal server errors');
     }
   }
 );
@@ -114,9 +112,9 @@ workoutRouter.delete(
       // Update the routine's total_time
       await updateRoutineTotalTime(routine);
 
-      return res.send({ message: 'Workout deleted successfully' });
+      return res.status(200).send({ message: 'Workout deleted successfully' });
     } catch (error) {
-      return res.send({ message: 'Unable to delete the workout' });
+      return res.send(500).send({ message: 'Unable to delete the workout' });
     }
   }
 );

@@ -21,16 +21,15 @@ userRouter.post(
     successRedirect: '/api/users',
     failureRedirect: '/api/users',
     failureFlash: true,
-  }),
+  })
 );
-
 
 userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
   const { username, user_id, email } = req.user;
   try {
     res.status(200).send({ username, user_id, email });
   } catch (error) {
-    res.status(500).send('Interal server error')
+    res.status(500).send('Interal server error');
   }
 });
 
@@ -52,7 +51,6 @@ userRouter.put(
           user.password = hashedPassword;
         }
         const updatedUser = await userRepo.save(user);
-        console.log(updatedUser);
         return res.status(200).send({
           user_id: updatedUser.user_id,
           username: updatedUser.username,
@@ -60,7 +58,11 @@ userRouter.put(
         });
       }
     } catch (error) {
-      res.send('cannot update user');
+      if (error.code === 'ER_DUP_ENTRY') {
+        let errorMessage = 'This username has been used.';
+        return res.status(409).json({ error: errorMessage });
+      }
+      res.status(500).send('Interal server error');
     }
   }
 );
@@ -74,9 +76,18 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
     console.log(`saved user ${savedUser}`);
     return res.status(200).send({ message: 'Create user successful' });
   } catch (error) {
-    console.log(error);
-    return res.status(500).send({ message: 'An error occurred' });
+    if (error.code === 'ER_DUP_ENTRY') {
+      let errorMessage = '';
+
+      if (error.sqlMessage.includes('@')) {
+        errorMessage = 'This email has been used.';
+      } else {
+        errorMessage = 'This username has been used.';
+      }
+      return res.status(409).json({ error: errorMessage });
+    }
   }
+  return res.status(500).send('Interal server error');
 });
 
 export default userRouter;
