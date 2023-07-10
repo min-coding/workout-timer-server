@@ -1,12 +1,13 @@
-// import * as express from 'express';
 import { Request, Response } from 'express';
 
 function isAuth(req, res: Response, next) {
-  console.log(req.session)
   if (req.isAuthenticated()) {
     return next();
   }
-  return res.send('You are unauthorized!')
+  if (req.session.flash.error.length > 1) {
+    req.session.flash.error.shift();
+  }
+  return res.status(403).send(req.session.flash.error[0]);
 }
 
 export { isAuth };

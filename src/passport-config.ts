@@ -1,5 +1,5 @@
 import { Strategy as LocalStrategy } from 'passport-local'
-import * as bcrypt from 'bcryptjs'
+import bcrypt from 'bcryptjs'
 
 function setPassport(passport, getUserByEmail, getUserById) {
   async function authUser(email, password, done) {
@@ -10,6 +10,7 @@ function setPassport(passport, getUserByEmail, getUserById) {
       if (await bcrypt.compare(password, user.password)) {
         return done(null, user)
       } else {
+        console.log(`incorrect password from passport-config`)
         return done(null, false, { message: 'Incorrect Password' })
       }
     } catch (error) {

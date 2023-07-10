@@ -57,7 +57,9 @@ Passport.js Flow
   4.1 When a user attempts to authenticate, the application receives the user's credentials, typically through a login form.
 
   4.2 The application initiates the authentication process, typically through a route or a controller.
-  4.3 Passport middleware is used to authenticate the user: 4.4 Passport middleware intercepts the authentication request, determines the appropriate strategy based on the request, and invokes the verification function.
+  4.3 Passport middleware is used to authenticate the user: 
+  
+  4.4 Passport middleware intercepts the authentication request, determines the appropriate strategy based on the request, and invokes the verification function.
 
   4.5 The verification function validates the user's credentials against the stored data, such as a username/password combination in the database.
 

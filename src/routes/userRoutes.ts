@@ -1,35 +1,36 @@
 import { User } from '../entity/User';
 import { Request, Response } from 'express';
 import { AppDataSource } from '../data-source';
-import * as passport from 'passport';
-import * as bcrypt from 'bcryptjs';
-import * as express from 'express';
+import passport from 'passport';
+import bcrypt from 'bcryptjs';
+import express from 'express';
 import { isAuth } from '../utils';
+import flash from 'express-flash';
 
 const userRouter = express.Router();
 const userRepo = AppDataSource.getRepository(User);
 
 interface UserSession extends Request {
   user: User;
-  flash: Function;
 }
 
 userRouter.post(
   '/signin',
+  flash(),
   passport.authenticate('local', {
     successRedirect: '/api/users',
+    failureRedirect: '/api/users',
+    failureFlash: true,
   }),
-  (req, res: Response) => {
-    res.status(200);
-  }
 );
+
 
 userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
   const { username, user_id, email } = req.user;
   try {
     res.status(200).send({ username, user_id, email });
   } catch (error) {
-    res.send(req.flash().error);
+    res.status(500).send('Interal server error')
   }
 });
 

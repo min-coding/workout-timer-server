@@ -1,16 +1,15 @@
 import { AppDataSource } from './data-source';
-import * as express from 'express';
-import * as cors from 'cors';
+import express from 'express';
+import cors from 'cors';
 import { User } from './entity/User';
-import { Request, Response } from 'express';
-import * as https from 'https';
-import * as path from 'path';
-import * as fs from 'fs';
+import https from 'https';
+import path from 'path';
+import fs from 'fs';
 
 //Authen
-import * as passport from 'passport';
-import * as flash from 'express-flash';
-import * as session from 'express-session';
+import passport from 'passport';
+import flash from 'express-flash';
+import session from 'express-session';
 import setPassport from './passport-config';
 import { isAuth } from './utils';
 
@@ -32,7 +31,7 @@ app.use(
     origin: 'http://127.0.0.1:5173',
     credentials: true,
   })
-)
+);
 const userRepository = AppDataSource.getRepository(User);
 
 //authen
@@ -48,7 +47,7 @@ setPassport(
     return user;
   }
 );
-app.use(flash());
+
 app.use(
   session({
     secret: 'sessionSecret',
@@ -56,16 +55,16 @@ app.use(
     saveUninitialized: false,
     cookie: {
       secure: true,
-      sameSite: 'none',
+      sameSite: 'none'
     },
   })
 );
-
+app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }))
+app.use(express.urlencoded({ extended: true }));
 
 app.use('/api/users', userRouter);
 app.use('/api/routines', isAuth, routineRouter);

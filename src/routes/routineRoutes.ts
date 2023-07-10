@@ -1,7 +1,6 @@
 import { User } from '../entity/User';
 import { Request, Response } from 'express';
 import * as express from 'express';
-import { isAuth } from '../utils';
 import { AppDataSource } from '../data-source';
 import { Routine } from '../entity/Routine';
 import { Workout } from '../entity/Workout';
@@ -13,7 +12,6 @@ const workoutRepository = AppDataSource.getRepository(Workout);
 
 interface UserSession extends Request {
   user: User;
-  flash: Function;
 }
 
 // create new routine

@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import * as express from 'express';
+import express from 'express';
 import { User } from '../entity/User';
 import { Workout } from '../entity/Workout';
 import { AppDataSource } from '../data-source';
@@ -11,7 +11,6 @@ const workoutRepository = AppDataSource.getRepository(Workout);
 
 interface UserSession extends Request {
   user: User;
-  flash: Function;
 }
 
 async function updateRoutineTotalTime(routine) {
