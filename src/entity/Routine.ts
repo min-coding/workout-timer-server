@@ -8,7 +8,6 @@ import {
 } from 'typeorm';
 import { User } from './User';
 import { Workout } from './Workout';
-import { AppDataSource } from '../data-source';
 
 @Entity()
 export class Routine {

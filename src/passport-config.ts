@@ -27,6 +27,7 @@ function setPassport(passport, getUserByEmail, getUserById) {
   );
   //get user id and save to session
   passport.serializeUser((user, done) => {
+    console.log('Serialize user:', user);
     return done(null, user.user_id);
   });
 

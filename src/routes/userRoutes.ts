@@ -90,4 +90,13 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
   return res.status(500).send('Interal server error');
 });
 
+userRouter.post('/signout', async (req, res, next) => {
+  req.logout(function (err) {
+    if (err) {
+      return next(err);
+    }
+    res.send(`logout!!`);
+  });
+});
+
 export default userRouter;
