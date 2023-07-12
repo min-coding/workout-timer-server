@@ -2,9 +2,10 @@ import { AppDataSource } from './data-source';
 import express from 'express';
 import cors from 'cors';
 import { User } from './entity/User';
-import https from 'https';
-import path from 'path';
-import fs from 'fs';
+// import https from 'https';
+// import path from 'path';
+// import fs from 'fs';
+import dotenv from 'dotenv';
 
 //Authen
 import passport from 'passport';
@@ -18,6 +19,8 @@ import userRouter from './routes/userRoutes';
 import routineRouter from './routes/routineRoutes';
 import workoutRouter from './routes/workoutRoutes';
 
+dotenv.config();
+
 AppDataSource.initialize()
   .then(async () => {
     console.log('initialized database!');
@@ -26,9 +29,10 @@ AppDataSource.initialize()
 
 // create and setup express app
 const app = express();
+
 app.use(
   cors({
-    origin: 'http://127.0.0.1:5173',
+    origin: process.env.ORIGIN,
     credentials: true,
   })
 );
@@ -50,7 +54,7 @@ setPassport(
 
 app.use(
   session({
-    secret: 'sessionSecret',
+    secret: process.env.MY_SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -70,15 +74,15 @@ app.use('/api/users', userRouter);
 app.use('/api/routines', isAuth, routineRouter);
 app.use('/api/workouts', isAuth, workoutRouter);
 
-const sslServer = https.createServer(
-  {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
-  },
-  app
-);
+// const sslServer = https.createServer(
+//   {
+//     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+//     cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+//   },
+//   app
+// );
 
-sslServer.listen(8080, () =>
-  console.log('secure server on port https://localhost:8080/')
-);
-// app.listen(8080,()=>console.log(`running on http://localhost:8080`))
+// sslServer.listen(8080, () =>
+//   console.log('secure server on port https://localhost:8080/')
+// );
+app.listen(8080, () => console.log(`running on http://localhost:8080`));

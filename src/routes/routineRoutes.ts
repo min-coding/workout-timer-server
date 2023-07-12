@@ -91,22 +91,6 @@ routineRouter.put(
   }
 );
 
-//get all routines from that user (routine lists)
-// routineRouter.get('/', async function (req: UserSession, res: Response) {
-//   try {
-//     const routineLists = await routineRepository
-//       .createQueryBuilder('routine')
-//       .select(['routine.routine_name', 'routine.routine_id'])
-//       .where('routine.user_id = :userId', { userId: req.user.user_id })
-//       .getMany();
-
-//     return res.send(routineLists);
-//   } catch (error) {
-//     res.send('you have no toutine');
-//     console.log('you have no routine!');
-//   }
-// })
-
 //get workout list in specific routine
 routineRouter.get(
   '/:routineId',
