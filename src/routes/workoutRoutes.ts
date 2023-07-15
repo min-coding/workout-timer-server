@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import express from 'express';
-import { User } from '../entity/User';
 import { Workout } from '../entity/Workout';
 import { AppDataSource } from '../data-source';
 import { Routine } from '../entity/Routine';
@@ -8,10 +7,6 @@ import { Routine } from '../entity/Routine';
 const workoutRouter = express.Router();
 const routineRepository = AppDataSource.getRepository(Routine);
 const workoutRepository = AppDataSource.getRepository(Workout);
-
-interface UserSession extends Request {
-  user: User;
-}
 
 async function updateRoutineTotalTime(routine) {
   const routineRepository = AppDataSource.getRepository(Routine);
@@ -34,72 +29,66 @@ async function updateRoutineTotalTime(routine) {
 }
 
 // API route for creating a new workout
-workoutRouter.post(
-  '/:routineId',
-  async function (req: UserSession, res: Response) {
-    try {
-      // Get the routine ID from the request params
-      const routineId = Number(req.params.routineId);
+workoutRouter.post('/:routineId', async function (req: Request, res: Response) {
+  try {
+    // Get the routine ID from the request params
+    const routineId = Number(req.params.routineId);
 
-      // Find the routine using the routine ID
-      const routine = await routineRepository.findOneBy({
-        routine_id: routineId,
-      });
+    // Find the routine using the routine ID
+    const routine = await routineRepository.findOneBy({
+      routine_id: routineId,
+    });
 
-      // Create a new instance of Workout
-      const workout = new Workout();
-      workout.workout_name = req.body.workout_name;
-      workout.duration = req.body.duration;
-      workout.routine = routine;
+    // Create a new instance of Workout
+    const workout = new Workout();
+    workout.workout_name = req.body.workout_name;
+    workout.duration = req.body.duration;
+    workout.routine = routine;
 
-      // Save the workout to the database
-      const savedWorkout = await workoutRepository.save(workout);
+    // Save the workout to the database
+    const savedWorkout = await workoutRepository.save(workout);
 
-      // Update the routine's total_time
-      await updateRoutineTotalTime(routine);
+    // Update the routine's total_time
+    await updateRoutineTotalTime(routine);
 
-      // Send the saved workout as the response
-      res.send(savedWorkout);
-    } catch (error) {
-      // Handle any errors
-      console.log(error);
-    }
+    // Send the saved workout as the response
+    res.send(savedWorkout);
+  } catch (error) {
+    // Handle any errors
+    console.log(error);
   }
-);
+});
 
 // API route for updating a workout
-workoutRouter.put(
-  '/:workoutId',
-  async function (req: UserSession, res: Response) {
-    try {
-      const workout = await workoutRepository.findOneBy({
-        workout_id: Number(req.params.workoutId),
-      });
-      const routine = workout.routine;
+workoutRouter.put('/:workoutId', async function (req: Request, res: Response) {
+  try {
+    const workout = await workoutRepository.findOneBy({
+      workout_id: Number(req.params.workoutId),
+    });
+    const routine = workout.routine;
 
-      const { workout_name, duration } = req.body;
+    const { workout_name, duration } = req.body;
 
-      // Update workout properties
-      if (workout_name) workout.workout_name = workout_name;
-      if (duration) workout.duration = duration;
+    // Update workout properties
+    if (workout_name) workout.workout_name = workout_name;
+    if (duration) workout.duration = duration;
 
-      // Save the updated workout to the database
-      const updatedWorkout = await workoutRepository.save(workout);
+    // Save the updated workout to the database
+    const updatedWorkout = await workoutRepository.save(workout);
 
-      // Update the routine's total_time
-      await updateRoutineTotalTime(routine);
+    // Update the routine's total_time
+    await updateRoutineTotalTime(routine);
 
-      return res.send(updatedWorkout);
-    } catch (error) {
-      return res.status(500).send('Internal server errors');
-    }
+    return res.send(updatedWorkout);
+  } catch (error) {
+    return res.status(500).send('Internal server errors');
   }
-);
+});
 
 // API route for deleting a workout
 workoutRouter.delete(
   '/:workoutId',
-  async function (req: UserSession, res: Response) {
+  async function (req: Request, res: Response) {
     try {
       const workout = await workoutRepository.findOneBy({
         workout_id: Number(req.params.workoutId),

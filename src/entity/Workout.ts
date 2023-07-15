@@ -8,7 +8,6 @@ import {
   JoinColumn,
 } from 'typeorm';
 import { Routine } from './Routine';
-import { AppDataSource } from '../data-source';
 
 @Entity()
 export class Workout {

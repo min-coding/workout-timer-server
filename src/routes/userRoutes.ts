@@ -5,26 +5,33 @@ import passport from 'passport';
 import bcrypt from 'bcryptjs';
 import express from 'express';
 import { isAuth } from '../utils';
-import flash from 'express-flash';
 
 const userRouter = express.Router();
 const userRepo = AppDataSource.getRepository(User);
 
-interface UserSession extends Request {
-  user: User;
+interface UserDataType extends Request {
+  user: {
+    username: string;
+    user_id: number;
+    email: string;
+  };
 }
 
 userRouter.post(
   '/signin',
-  flash(),
   passport.authenticate('local', {
     successRedirect: '/api/users',
-    failureRedirect: '/api/users',
+    failureRedirect: '/api/users/signin/failure',
     failureFlash: true,
   })
 );
 
-userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
+userRouter.get('/signin/failure', async (req, res) => {
+  let message = req.flash().error.pop();
+  return res.status(403).send(message);
+});
+
+userRouter.get('/', isAuth, (req: UserDataType, res: Response) => {
   const { username, user_id, email } = req.user;
   try {
     res.status(200).send({ username, user_id, email });
@@ -36,7 +43,7 @@ userRouter.get('/', isAuth, (req: UserSession, res: Response) => {
 userRouter.put(
   '/profile/:userId',
   isAuth,
-  async function (req: UserSession, res: Response) {
+  async function (req: Request, res: Response) {
     try {
       const user = await userRepo.findOneBy({
         user_id: Number(req.params.userId),
@@ -91,7 +98,7 @@ userRouter.post('/signup', async (req: Request, res: Response) => {
 });
 
 userRouter.post('/signout', async (req, res, next) => {
-  req.logout(function (err) {
+  req.logOut(function (err) {
     if (err) {
       return next(err);
     }

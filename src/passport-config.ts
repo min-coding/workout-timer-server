@@ -4,7 +4,9 @@ import bcrypt from 'bcryptjs';
 function setPassport(passport, getUserByEmail, getUserById) {
   async function authUser(email, password, done) {
     const user = await getUserByEmail(email);
-    if (user == null) return done(null, false, { message: 'Invalid email' });
+    if (user == null) {
+      return done(null, false, { message: 'Invalid email' });
+    }
     try {
       //compare password from user VS database
       if (await bcrypt.compare(password, user.password)) {
@@ -27,14 +29,12 @@ function setPassport(passport, getUserByEmail, getUserById) {
   );
   //get user id and save to session
   passport.serializeUser((user, done) => {
-    console.log('Serialize user:', user);
     return done(null, user.user_id);
   });
 
   //call user by user id that is saved in session
   passport.deserializeUser(async (id, done) => {
     const user = await getUserById(id);
-    console.log('Deserialized user:', user);
     return done(null, user);
   });
 }

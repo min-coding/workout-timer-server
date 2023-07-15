@@ -10,12 +10,16 @@ const routineRepository = AppDataSource.getRepository(Routine);
 const userRepository = AppDataSource.getRepository(User);
 const workoutRepository = AppDataSource.getRepository(Workout);
 
-interface UserSession extends Request {
-  user: User;
+interface UserDataType extends Request {
+  user: {
+    username: string;
+    user_id: number;
+    email: string;
+  };
 }
 
 // create new routine
-routineRouter.post('/', async function (req: UserSession, res: Response) {
+routineRouter.post('/', async function (req: UserDataType, res: Response) {
   try {
     //Find that user to get User object
     const user = await userRepository.findOneBy({ user_id: req.user.user_id });
@@ -37,7 +41,7 @@ routineRouter.post('/', async function (req: UserSession, res: Response) {
 //delete routine
 routineRouter.delete(
   '/:routineId',
-  async function (req: UserSession, res: Response) {
+  async function (req: UserDataType, res: Response) {
     try {
       //find routine
       const routine = await routineRepository.findOneBy({
@@ -61,7 +65,7 @@ routineRouter.delete(
 //update routine name only
 routineRouter.put(
   '/:routineId',
-  async function (req: UserSession, res: Response) {
+  async function (req: UserDataType, res: Response) {
     try {
       const routine = await routineRepository.findOneBy({
         routine_id: Number(req.params.routineId),
@@ -92,28 +96,25 @@ routineRouter.put(
 );
 
 //get workout list in specific routine
-routineRouter.get(
-  '/:routineId',
-  async function (req: UserSession, res: Response) {
-    try {
-      //get the routine id from param, get lists of workouts
-      const workoutList = await workoutRepository
-        .createQueryBuilder('workout')
-        .select(['workout.workout_name', 'workout.workout_id'])
-        .where('workout.routine_id = :routineId', {
-          routineId: req.params.routineId,
-        })
-        .getMany();
+routineRouter.get('/:routineId', async function (req: Request, res: Response) {
+  try {
+    //get the routine id from param, get lists of workouts
+    const workoutList = await workoutRepository
+      .createQueryBuilder('workout')
+      .select(['workout.workout_name', 'workout.workout_id'])
+      .where('workout.routine_id = :routineId', {
+        routineId: req.params.routineId,
+      })
+      .getMany();
 
-      return res.status(200).send(workoutList);
-    } catch (error) {
-      return res.status(500).send('Internal server error');
-    }
+    return res.status(200).send(workoutList);
+  } catch (error) {
+    return res.status(500).send('Internal server error');
   }
-);
+});
 
 //get all
-routineRouter.get('/', async function (req: UserSession, res: Response) {
+routineRouter.get('/', async function (req: UserDataType, res: Response) {
   try {
     const routineLists = await routineRepository
       .createQueryBuilder('routine')
