@@ -2,11 +2,9 @@ import { AppDataSource } from './data-source';
 import express from 'express';
 import cors from 'cors';
 import { User } from './entity/User';
-import { Routine } from './entity/Routine';
-import { Workout } from './entity/Workout';
-import https from 'https';
-import path from 'path';
-import fs from 'fs';
+// import https from 'https';
+// import path from 'path';
+// import fs from 'fs';
 import dotenv from 'dotenv';
 
 //Authen
@@ -25,9 +23,6 @@ dotenv.config();
 
 AppDataSource.initialize()
   .then(async () => {
-    // const userRepository = await AppDataSource.getRepository(User);
-    // const routineRepository = await AppDataSource.getRepository(Routine);
-    // const workoutRepository = await AppDataSource.getRepository(Workout);
     console.log('initialized database!');
   })
   .catch((error) => console.log(error));
@@ -37,7 +32,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.ORIGIN,
+    origin: process.env.ORIGIN || 'http://127.0.0.1:5173',
     credentials: true,
   })
 );
@@ -84,17 +79,16 @@ app.use('/api/users', userRouter);
 app.use('/api/routines', isAuth, routineRouter);
 app.use('/api/workouts', isAuth, workoutRouter);
 
-const sslServer = https.createServer(
-  {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
-  },
-  app
-);
-
-sslServer.listen(8080, () =>
-  console.log('secure server on port https://localhost:8080/')
-);
-// app.listen(process.env.SERVER_PORT || 8080, () =>
-//   console.log(`running on http://localhost:8080`)
+// const sslServer = https.createServer(
+//   {
+//     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+//     cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+//   },
+//   app
 // );
+
+// sslServer.listen(8080, () =>
+//   console.log('secure server on port https://localhost:8080/')
+// );
+const port = process.env.SERVER_PORT || 8080;
+app.listen(port, () => console.log(`running on http://localhost:${port}`));
