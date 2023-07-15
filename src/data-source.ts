@@ -1,7 +1,13 @@
 import 'reflect-metadata';
 import dotenv from 'dotenv';
 import { DataSource } from 'typeorm';
+import path from 'path';
 
+//specifying entity path based on file path
+let entitiesPath = path.resolve(__dirname, 'entity/*{.js,.ts}');
+if (__dirname.includes('build')) {
+  entitiesPath = path.resolve(__dirname, '../build/entity/*{.js,.ts}');
+}
 dotenv.config();
 
 export const AppDataSource = new DataSource({
@@ -13,7 +19,6 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME || 'workout_timer',
   synchronize: true,
   logging: false,
-  entities: ['src/entity/*{.js,.ts}'],
+  entities: [entitiesPath],
   migrations: [],
-  subscribers: ['src/subscriber/*{.js,.ts}'],
 });
