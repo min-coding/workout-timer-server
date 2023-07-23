@@ -28,6 +28,12 @@ userRouter.post(
 
 userRouter.get('/signin/failure', async (req, res) => {
   let message = req.flash().error.pop();
+  res.header(
+    'Access-Control-Allow-Origin',
+    process.env.ORIGIN || 'http://127.0.0.1:5173'
+  );
+  res.header('Access-Control-Allow-Credentials', 'true');
+
   return res.status(403).send(message);
 });
 
