@@ -10,7 +10,7 @@ import dotenv from 'dotenv';
 //Authen
 import passport from 'passport';
 import flash from 'express-flash';
-import session from 'express-session';
+import session from 'cookie-session';
 import setPassport from './passport-config';
 import { isAuth } from './utils';
 
