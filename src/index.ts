@@ -10,7 +10,8 @@ import dotenv from 'dotenv';
 //Authen
 import passport from 'passport';
 import flash from 'express-flash';
-import session from 'cookie-session';
+import session from 'express-session';
+const MySQLStore = require('express-mysql-session')(session);
 import setPassport from './passport-config';
 import { isAuth } from './utils';
 
@@ -37,10 +38,19 @@ app.use(
   })
 );
 
+const storeOptions = {
+  host: process.env.DB_HOST || 'localhost',
+  port: Number(process.env.DB_PORT) || 3306,
+  user: process.env.DB_USERNAME || 'root',
+  password: process.env.DB_PASSWORD || '',
+  database: process.env.DB_NAME || 'workout_timer',
+};
+
 //connect to session and send session id in cookie via res.header
 app.use(
   session({
     secret: process.env.MY_SESSION_SECRET,
+    store: new MySQLStore(storeOptions),
     resave: false,
     saveUninitialized: false,
     cookie: {
