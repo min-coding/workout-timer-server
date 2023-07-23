@@ -101,4 +101,4 @@ app.use('/api/workouts', isAuth, workoutRouter);
 //   console.log('secure server on port https://localhost:8080/')
 // );
 const port = process.env.PORT || 8080;
-app.listen(port, () => console.log(`running on http://localhost:${port}`));
+app.listen(port, () => console.log(`running on PORT ${port}`));
