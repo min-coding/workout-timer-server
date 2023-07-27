@@ -26,11 +26,12 @@ userRouter.post(
 );
 
 userRouter.get('/failure', (req: Request, res: Response) => {
-  try {
-    res.status(403).json(`Please check you email and password `);
-  } catch (error) {
-    res.status(500).send('Interal server error');
-  }
+  res.header(
+    'Access-Control-Allow-Origin',
+    process.env.ORIGIN || 'http://127.0.0.1:5173'
+  );
+  res.header('Access-Control-Allow-Credentials', 'true');
+  return res.status(403).json(`Please check you email and password `);
 });
 
 userRouter.get('/', isAuth, (req: UserDataType, res: Response) => {
