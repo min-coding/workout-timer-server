@@ -56,6 +56,8 @@ app.use(
     cookie: {
       secure: true,
       sameSite: 'none',
+      domain: process.env.ORIGIN,
+      httpOnly: true,
     },
   })
 );
