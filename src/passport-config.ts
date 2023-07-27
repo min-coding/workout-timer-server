@@ -11,6 +11,7 @@ function setPassport(passport, getUserByEmail, getUserById) {
       }
       //compare password from user VS database
       if (await bcrypt.compare(password, user.password)) {
+        console.log('authen success');
         return done(null, user);
       } else {
         return done(null, false);
@@ -30,11 +31,13 @@ function setPassport(passport, getUserByEmail, getUserById) {
   );
   //get user id and save to session
   passport.serializeUser((user, done) => {
+    console.log('serialize');
     return done(null, user.user_id);
   });
 
   //call user by user id that is saved in session
   passport.deserializeUser(async (id, done) => {
+    console.log('DEserialize');
     const user = await getUserById(id);
     return done(null, user);
   });

@@ -26,6 +26,7 @@ userRouter.post(
 );
 
 userRouter.get('/failure', (req: Request, res: Response) => {
+  console.log(`Failure`);
   res.header(
     'Access-Control-Allow-Origin',
     process.env.ORIGIN || 'http://127.0.0.1:5173'
@@ -36,6 +37,9 @@ userRouter.get('/failure', (req: Request, res: Response) => {
 
 userRouter.get('/', isAuth, (req: UserDataType, res: Response) => {
   const { username, user_id, email } = req.user;
+  console.log(`success but what about status? show req.user`);
+  console.log(req.user);
+
   try {
     res.status(200).send({ username, user_id, email });
   } catch (error) {
