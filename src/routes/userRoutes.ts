@@ -21,20 +21,16 @@ userRouter.post(
   '/signin',
   passport.authenticate('local', {
     successRedirect: '/api/users',
-    failureRedirect: '/api/users/signin/failure',
-    failureFlash: true,
+    failureRedirect: '/api/users/failure',
   })
 );
 
-userRouter.get('/signin/failure', async (req, res) => {
-  let message = req.flash().error.pop();
-  res.header(
-    'Access-Control-Allow-Origin',
-    process.env.ORIGIN || 'http://127.0.0.1:5173'
-  );
-  res.header('Access-Control-Allow-Credentials', 'true');
-
-  return res.status(403).send(message);
+userRouter.get('/failure', (req: Request, res: Response) => {
+  try {
+    res.status(403).json(`Please check you email and password `);
+  } catch (error) {
+    res.status(500).send('Interal server error');
+  }
 });
 
 userRouter.get('/', isAuth, (req: UserDataType, res: Response) => {
@@ -108,8 +104,8 @@ userRouter.post('/signout', async (req, res, next) => {
     if (err) {
       return next(err);
     }
-    res.send(`logout!!`);
   });
+  res.send(`logout!!`);
 });
 
 export default userRouter;
