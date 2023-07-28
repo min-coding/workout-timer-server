@@ -2,9 +2,9 @@ import { AppDataSource } from './data-source';
 import express from 'express';
 import cors from 'cors';
 import { User } from './entity/User';
-import https from 'https';
-import path from 'path';
-import fs from 'fs';
+// import https from 'https';
+// import path from 'path';
+// import fs from 'fs';
 import dotenv from 'dotenv';
 
 //Authen
@@ -91,16 +91,16 @@ app.use('/api/users', userRouter);
 app.use('/api/routines', isAuth, routineRouter);
 app.use('/api/workouts', isAuth, workoutRouter);
 
-const sslServer = https.createServer(
-  {
-    key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
-    cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
-  },
-  app
-);
+// const sslServer = https.createServer(
+//   {
+//     key: fs.readFileSync(path.join(__dirname, 'cert', 'key.pem')),
+//     cert: fs.readFileSync(path.join(__dirname, 'cert', 'cert.pem')),
+//   },
+//   app
+// );
 
-sslServer.listen(8080, () =>
-  console.log('secure server on port https://localhost:8080/')
-);
-// const port = process.env.PORT || 8080;
-// app.listen(port, () => console.log(`running on PORT ${port}`));
+// sslServer.listen(8080, () =>
+//   console.log('secure server on port https://localhost:8080/')
+// );
+const port = process.env.PORT || 8080;
+app.listen(port, () => console.log(`running on PORT ${port}`));
