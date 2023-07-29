@@ -2,9 +2,9 @@ import { AppDataSource } from './data-source';
 import express from 'express';
 import cors from 'cors';
 import { User } from './entity/User';
-import https from 'https';
-import path from 'path';
-import fs from 'fs';
+// import https from 'https';
+// import path from 'path';
+// import fs from 'fs';
 import dotenv from 'dotenv';
 
 //Authen
@@ -29,6 +29,8 @@ AppDataSource.initialize()
 
 // create and setup express app
 const app = express();
+
+app.set('trust proxy', 1);
 
 app.use(
   cors({
@@ -57,6 +59,7 @@ app.use(
       secure: true,
       sameSite: 'none',
       httpOnly: true,
+      domain: '.onrender.com',
     },
   })
 );
