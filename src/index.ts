@@ -59,7 +59,7 @@ app.use(
       secure: true,
       sameSite: 'none',
       httpOnly: true,
-      domain: '.onrender.com',
+      domain: '.min-workout-timer.onrender.com',
     },
   })
 );
