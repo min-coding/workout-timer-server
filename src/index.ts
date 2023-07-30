@@ -58,7 +58,7 @@ app.use(
     cookie: {
       secure: true,
       sameSite: 'none',
-      domain: '.min-workout-timer.onrender.com',
+      httpOnly: true,
     },
   })
 );
